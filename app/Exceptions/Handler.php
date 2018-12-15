@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Exceptions;
+
+use App\Http\Controllers\SiteController;
+use App\Menu;
+use App\Repositories\MenusRepository;
+use Exception;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+
+class Handler extends ExceptionHandler
+{
+    /**
+     * A list of the exception types that are not reported.
+     *
+     * @var array
+     */
+    protected $dontReport = [
+        //
+    ];
+
+    /**
+     * A list of the inputs that are never flashed for validation exceptions.
+     *
+     * @var array
+     */
+    protected $dontFlash = [
+        'password',
+        'password_confirmation',
+    ];
+
+    /**
+     * Report or log an exception.
+     *
+     * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
+     *
+     * @param  \Exception  $exception
+     * @return void
+     */
+    public function report(Exception $exception)
+    {
+        parent::report($exception);
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Exception  $exception
+     * @return \Illuminate\Http\Response
+     */
+    public function render($request, Exception $exception)
+    {
+        if($this->isHttpException($exception)) {
+            $get_status_code = $exception->getStatusCode();
+
+            switch ($get_status_code) {
+                case '404' :
+
+//                    $menu = new SiteController(new MenusRepository(new Menu()));
+//                    $navigation = view(env('THEME') . '.navigation')
+//                        ->with('menu', $menu->getMenu())
+//                        ->render();
+
+                    return response()
+                        ->view(env('THEME') . '.404', ['bar'=>'no', 'title'=>'Page not found']);
+            }
+        }
+
+        return parent::render($request, $exception);
+    }
+}
